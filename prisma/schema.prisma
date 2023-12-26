@@ -1,0 +1,62 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model Topic {
+  id            String @id @default(auto()) @map("_id") @db.ObjectId
+  name          String
+  description   String
+  creator       String
+  createdAt     DateTime @default(now())
+  super         Topic? @relation(name: "super", fields: [super_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  super_id      String? @db.ObjectId
+  sub           Topic[] @relation(name: "super")
+  posts         Post[]
+
+  @@unique([ name ])
+}
+
+model Post {
+  id            String @id @default(auto()) @map("_id") @db.ObjectId
+  title         String
+  reply_to      Post? @relation(name: "reply", fields: [reply_to_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  reply_to_id   String @db.ObjectId
+  createdAt     DateTime @default(now())
+  content       String
+  author        User @relation(fields: [author_id], references: [id])
+  author_id     String @db.ObjectId
+  topic         Topic @relation(fields: [topic_id], references: [id])
+  topic_id      String @db.ObjectId
+  replies       Post[] @relation(name: "reply")
+  comments      Comment[]
+
+  @@unique([title])
+}
+
+model User {
+  id            String @id @default(auto()) @map("_id") @db.ObjectId
+  name          String
+  email         String
+  posts         Post[]
+  comments      Comment[]
+
+  @@unique([name, email])
+}
+
+model Comment {
+  id            String @id @default(auto()) @map("_id") @db.ObjectId
+  body          String
+  author        User @relation(fields: [author_id], references: [id])
+  author_id     String @db.ObjectId
+  post          Post @relation(fields: [post_id], references: [id])
+  post_id       String @db.ObjectId
+  createdAt     DateTime @default(now())
+}
