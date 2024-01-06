@@ -5,7 +5,7 @@ export async function POST (req) {
 
     const {name, description, creator, createdAt, } = await req.json()
 
-    const data = {name,description, creator, createdAt} 
+    const data = {name, description, creator, createdAt} 
 
     const topic = await prisma.Topic.create({
         data: data

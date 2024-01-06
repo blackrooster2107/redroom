@@ -13,10 +13,12 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
-        <NavBar/>
-        {children}
-        <Footer/>
+      <body className={`${inter.className} min-h-screen bodygrid`}>
+        <NavBar />
+        <div className='self-start row'>
+          {children}
+        </div>
+        <Footer />
       </body>
     </html>
   )
